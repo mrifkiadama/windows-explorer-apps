@@ -1,0 +1,31 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "./generated"
+  engineType = "client"
+  runtime    = "bun"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Folder {
+  id        Int      @id @default(autoincrement())
+  name      String
+  parentId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  files     File[]
+  parent    Folder?  @relation("FolderToSubfolders", fields: [parentId], references: [id])
+  children  Folder[] @relation("FolderToSubfolders")
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  name      String
+  folderId  Int
+  size      Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  folder    Folder   @relation(fields: [folderId], references: [id])
+}
